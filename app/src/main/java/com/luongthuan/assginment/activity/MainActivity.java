@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String USER_ID = "187015156@N07";
     private static final String KEY_TOKEN = "9d788c3ae7173a1cda830edcc1be5792";
     private static final String GET_FAVORITE = "flickr.favorites.getList";
-    int pages = 0;
+    int pages = 1;
     List<Photo> photoList;
     MyAdapter myAdapter;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
@@ -63,9 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
         photoList=new ArrayList<>();
         myAdapter = new MyAdapter(photoList, MainActivity.this);
+        rvList.setHasFixedSize(true);
         rvList.setAdapter(myAdapter);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvList.setLayoutManager(staggeredGridLayoutManager);
+
+        // thực thi lệnh loadmore khi kéo xuống
         endlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -96,16 +99,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(final JSONObject response) {
                         exampleFavorite = new Gson().fromJson(response.toString(), ExampleFavorite.class);
+                        // thêm toàn bộ dữ liệu vào list
                         photoList.addAll(exampleFavorite.getPhotos().getPhoto());
-                        rvList.setHasFixedSize(true);
-                        myAdapter.notifyDataSetChanged();
-
-
+                        // thông báo cập nhật lại một vị trí được thêm mới
+                        myAdapter.notifyItemInserted(photoList.size());
                         if (exampleFavorite.getPhotos().getPhoto().size() == 0) {
                             rvList.addOnScrollListener(null);
                         }
-
-
                     }
 
                     @Override
