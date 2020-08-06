@@ -47,8 +47,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> implemen
         this.photoFavoriteList = photoFavoriteList;
         this.context = context;
         photoFavoriteListFull = new ArrayList<>(photoFavoriteList);
-        listUrl = new ArrayList();
-        image = new Image();
+
+
 
     }
 
@@ -136,62 +136,73 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> implemen
 //                url_o = photoFavoriteList.get(position).getUrlO();
 //                width_o=photoFavoriteList.get(position).getWidthO().toString();
 //                height_o=photoFavoriteList.get(position).getHeightO().toString();
+                listUrl = new ArrayList<Image>();
 
                 if (photoFavoriteList.get(position).getUrlSq() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlSq());
                     image.setWidth(photoFavoriteList.get(position).getWidthSq().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightSq().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlT() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlT());
                     image.setWidth(photoFavoriteList.get(position).getWidthT().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightT().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlS() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlS());
                     image.setWidth(photoFavoriteList.get(position).getWidthS().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightS().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlQ() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlQ());
                     image.setWidth(photoFavoriteList.get(position).getWidthQ().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightQ().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlM() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlM());
                     image.setWidth(photoFavoriteList.get(position).getWidthM().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightM().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlN() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlN());
                     image.setWidth(photoFavoriteList.get(position).getWidthN().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightN().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlZ() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlZ());
                     image.setWidth(photoFavoriteList.get(position).getWidthZ().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightZ().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlC() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlC());
                     image.setWidth(photoFavoriteList.get(position).getWidthC().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightC().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlL() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlL());
                     image.setWidth(photoFavoriteList.get(position).getWidthL().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightL().toString());
                     listUrl.add(image);
                 }
                 if (photoFavoriteList.get(position).getUrlO() != null) {
+                    image = new Image();
                     image.setUrl(photoFavoriteList.get(position).getUrlO());
                     image.setWidth(photoFavoriteList.get(position).getWidthO().toString());
                     image.setHeight(photoFavoriteList.get(position).getHeightO().toString());
@@ -200,12 +211,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> implemen
                 Log.e("Size", listUrl.size() + "");
 
                 bundle.putParcelableArrayList("url", listUrl);
-                for (int i = 0; i <listUrl.size() ; i++) {
-                    Log.e("GGGG",listUrl.get(i).getUrl());
-                }
+
                 intent.putExtras(bundle);
 
                 context.startActivity(intent, options.toBundle());
+                for (int i = 0; i < listUrl.size(); i++) {
+                    Log.e("GGGG", listUrl.get(i).getUrl());
+                }
                 listUrl.clear();
 
 

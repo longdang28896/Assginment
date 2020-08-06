@@ -87,21 +87,6 @@ public class PictureActivity extends AppCompatActivity {
         });
 
         Log.e("ArrayUrl", arrayUrl + "");
-//        UrlZ = bundle.getString("UrlZ");
-//        UrlM = bundle.getString("UrlM");
-//        UrlN = bundle.getString("UrlN");
-//        UrlQ = bundle.getString("UrlQ");
-//        height_Z = bundle.getString("height_Z");
-//        width_Z = bundle.getString("width_Z");
-//        height_M = bundle.getString("height_M");
-//        width_M = bundle.getString("width_M");
-//        height_N = bundle.getString("height_N");
-//        width_N = bundle.getString("width_N");
-//        for (int i = 0; i < arrayUrl.size(); i++) {
-//            if (i == arrayUrl.size() - 1) {
-//                Glide.with(this).load(arrayUrl.get(i).getUrl()).into(imgPicture);
-//            }
-//        }
 
         tvName.setText(title);
         action1 = findViewById(R.id.action1);
@@ -111,17 +96,9 @@ public class PictureActivity extends AppCompatActivity {
         action5 = findViewById(R.id.action5);
 
 
-
-                action1.setLabelText(arrayUrl.get(arrayUrl.size()-1).getHeight() + " x " + arrayUrl.get(arrayUrl.size()-1).getWidth());
-
-
-                action2.setLabelText(arrayUrl.get(arrayUrl.size()-2).getHeight() + " x " + arrayUrl.get(arrayUrl.size()-2).getWidth());
-
-
-                action3.setLabelText(arrayUrl.get(arrayUrl.size()-3).getHeight() + " x " + arrayUrl.get(arrayUrl.size()-3).getWidth());
-
-
-
+        action1.setLabelText(arrayUrl.get(arrayUrl.size() - 1).getHeight() + " x " + arrayUrl.get(arrayUrl.size() - 1).getWidth());
+        action2.setLabelText(arrayUrl.get(arrayUrl.size() - 2).getHeight() + " x " + arrayUrl.get(arrayUrl.size() - 2).getWidth());
+        action3.setLabelText(arrayUrl.get(arrayUrl.size() - 3).getHeight() + " x " + arrayUrl.get(arrayUrl.size() - 3).getWidth());
         action4.setLabelText("Share Facebook");
         action5.setLabelText("Set Wallpaper");
 
@@ -179,40 +156,29 @@ public class PictureActivity extends AppCompatActivity {
         action4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (int i = 0; i < arrayUrl.size(); i++) {
-                    if (i == arrayUrl.size() - 1) {
-                        ShareLinkContent content = new ShareLinkContent.Builder()
-                                .setContentUrl(Uri.parse(arrayUrl.get(i).getUrl()))
-                                .build();
+                ShareLinkContent content = new ShareLinkContent.Builder()
+                        .setContentUrl(Uri.parse(arrayUrl.get(arrayUrl.size() - 1).getUrl()))
+                        .build();
 
-                        ShareDialog shareDialog = new ShareDialog(PictureActivity.this);
-                        shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
-                    }
-                }
-
-
+                ShareDialog shareDialog = new ShareDialog(PictureActivity.this);
+                shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
             }
         });
 
         action5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (int i = 0; i < arrayUrl.size(); i++) {
-                    if (i == arrayUrl.size() - 1) {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                WallpaperManager wpm = WallpaperManager.getInstance(PictureActivity.this);
+                InputStream ins = null;
+                try {
+                    ins = new URL(arrayUrl.get(arrayUrl.size() - 1).getUrl()).openStream();
+                    wpm.setStream(ins);
+                    Toast.makeText(PictureActivity.this, "Wallpaper Changed", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
 
-                        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                        StrictMode.setThreadPolicy(policy);
-
-                        WallpaperManager wpm = WallpaperManager.getInstance(PictureActivity.this);
-                        InputStream ins = null;
-                        try {
-                            ins = new URL(arrayUrl.get(i).getUrl()).openStream();
-                            wpm.setStream(ins);
-                            Toast.makeText(PictureActivity.this, "Wallpaper Changed", Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
             }
         });
@@ -221,63 +187,44 @@ public class PictureActivity extends AppCompatActivity {
 
 
     private void startDownLoading1() {
-        for (int i = 0; i < arrayUrl.size(); i++) {
-            if (i == arrayUrl.size() - 1) {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(i).getUrl()));
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-                request.setTitle("BackgroundHD" + arrayUrl.get(i).getUrl().substring(35));
-                request.setDescription(arrayUrl.get(i).getUrl());
-                Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
-                DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                downloadManager.enqueue(request);
-            }
-        }
 
-
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(arrayUrl.size() - 1).getUrl()));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        request.setTitle("BackgroundHD" + arrayUrl.get(arrayUrl.size() - 1).getUrl().substring(35));
+        request.setDescription(arrayUrl.get(arrayUrl.size() - 1).getUrl());
+        Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
     }
 
     private void startDownLoading2() {
-        for (int i = 0; i < arrayUrl.size(); i++) {
-            if (i == arrayUrl.size() - 2) {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(i).getUrl()));
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-                request.setTitle("BackgroundHD" + arrayUrl.get(i).getUrl().substring(35));
-                request.setDescription(arrayUrl.get(i).getUrl());
-                Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
-                DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                downloadManager.enqueue(request);
-            }
-        }
-
-
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(arrayUrl.size() - 2).getUrl()));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        request.setTitle("BackgroundHD" + arrayUrl.get(arrayUrl.size() - 2).getUrl().substring(35));
+        request.setDescription(arrayUrl.get(arrayUrl.size() - 2).getUrl());
+        Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
     }
 
     private void startDownLoading3() {
-        for (int i = 0; i < arrayUrl.size(); i++) {
-            if (i == arrayUrl.size() - 3) {
 
-
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(i).getUrl()));
-                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-                request.setTitle("BackgroundHD" + arrayUrl.get(i).getUrl().substring(35));
-                request.setDescription(arrayUrl.get(i).getUrl());
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
-                Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
-                request.allowScanningByMediaScanner();
-
-                DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                downloadManager.enqueue(request);
-
-            }
-        }
-
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(arrayUrl.size() - 3).getUrl()));
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        request.setTitle("BackgroundHD" + arrayUrl.get(arrayUrl.size() - 3).getUrl().substring(35));
+        request.setDescription(arrayUrl.get(arrayUrl.size() - 3).getUrl());
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
+        Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
+        request.allowScanningByMediaScanner();
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
 
     }
 
