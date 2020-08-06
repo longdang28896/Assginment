@@ -36,10 +36,25 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
+    //noinspection GradleCompatible
+    compile 'com.android.support:design:25.3.1'
+
+   // share lên fb
+    compile 'com.facebook.android:facebook-share:[5,6)'
+
+    // sử dụng floating action
+    compile 'com.github.clans:fab:1.6.4'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    // sử dụng Phôtview
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    //sử dụng viewpager2
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
 }

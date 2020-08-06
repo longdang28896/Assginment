@@ -1,18 +1,29 @@
 package com.luongthuan.assginment.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Fade;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
+import android.widget.Toolbar;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -20,14 +31,17 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.Gson;
 import com.luongthuan.assginment.EndlessRecyclerViewScrollListener;
-import com.luongthuan.assginment.MyAdapter;
+import com.luongthuan.assginment.adapter.MyAdapter;
 import com.luongthuan.assginment.R;
 import com.luongthuan.assginment.model.ExampleFavorite;
-import com.luongthuan.assginment.model.Photo;
+import com.luongthuan.assginment.model.PhotoFavorite;
 
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,45 +49,55 @@ public class MainActivity extends AppCompatActivity {
     private static final String FULL_EXTRAS = "views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o";
     private static final String USER_ID = "187015156@N07";
     private static final String KEY_TOKEN = "9d788c3ae7173a1cda830edcc1be5792";
+    private static final String KEY_TOKEN1 = "ef1045dcda144840d9b3dfda972c199c";
     private static final String GET_FAVORITE = "flickr.favorites.getList";
     int pages = 1;
-    List<Photo> photoList;
+    List<PhotoFavorite> photoFavoriteList;
+
     MyAdapter myAdapter;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
     ExampleFavorite exampleFavorite;
     EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     SwipeRefreshLayout srlRefesh;
 
+    //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidNetworking.initialize(getApplicationContext());
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         rvList = findViewById(R.id.rvList);
         srlRefesh = findViewById(R.id.srlRefesh);
-        AndroidFast();
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         // gọi androidfast khi refesh
         srlRefesh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                AndroidFast();
+                myAdapter.notifyDataSetChanged();
                 srlRefesh.setRefreshing(false);
             }
         });
 
-        photoList=new ArrayList<>();
-        myAdapter = new MyAdapter(photoList, MainActivity.this);
+        photoFavoriteList = new ArrayList<>();
+
+        myAdapter = new MyAdapter(photoFavoriteList, MainActivity.this);
         rvList.setHasFixedSize(true);
         rvList.setAdapter(myAdapter);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvList.setLayoutManager(staggeredGridLayoutManager);
+        Log.e("11", 3333 + "");
 
+        AndroidFast();
         // thực thi lệnh loadmore khi kéo xuống
         endlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 pages++;
-                Log.e("11",11111+"");
+                Log.e("11", 11111 + "");
                 AndroidFast();
 
             }
@@ -85,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     public void AndroidFast() {
         AndroidNetworking.get("https://www.flickr.com/services/rest/")
                 .addQueryParameter("method", GET_FAVORITE)
-                .addQueryParameter("api_key", KEY_TOKEN)
+                .addQueryParameter("api_key", KEY_TOKEN1)
                 .addQueryParameter("user_id", USER_ID)
                 .addQueryParameter("extras", FULL_EXTRAS)
                 .addQueryParameter("per_page", "10")
@@ -100,10 +124,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(final JSONObject response) {
                         exampleFavorite = new Gson().fromJson(response.toString(), ExampleFavorite.class);
                         // thêm toàn bộ dữ liệu vào list
-                        photoList.addAll(exampleFavorite.getPhotos().getPhoto());
+                        photoFavoriteList.addAll(exampleFavorite.getPhotosFavorite().getPhotoFavorite());
                         // thông báo cập nhật lại một vị trí được thêm mới
-                        myAdapter.notifyItemInserted(photoList.size());
-                        if (exampleFavorite.getPhotos().getPhoto().size() == 0) {
+                        myAdapter.notifyItemInserted(photoFavoriteList.size());
+                        PictureActivity.photoFavoriteList=photoFavoriteList;
+                        Log.e("11", 2222 + "");
+                        //nếu đến page cuối thì không load nữa
+                        if (exampleFavorite.getPhotosFavorite().getPhotoFavorite().size() == exampleFavorite.getPhotosFavorite().getPhotoFavorite().size() - 1) {
                             rvList.addOnScrollListener(null);
                         }
                     }
@@ -120,6 +147,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) search.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                myAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

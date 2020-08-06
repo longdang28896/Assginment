@@ -4,7 +4,7 @@ package com.luongthuan.assginment.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Photo {
+public class PhotoGP {
 
     @SerializedName("id")
     @Expose
@@ -36,9 +36,6 @@ public class Photo {
     @SerializedName("views")
     @Expose
     private String views;
-    @SerializedName("date_faved")
-    @Expose
-    private String dateFaved;
     @SerializedName("media")
     @Expose
     private String media;
@@ -117,6 +114,15 @@ public class Photo {
     @SerializedName("width_c")
     @Expose
     private Integer widthC;
+    @SerializedName("pathalias")
+    @Expose
+    private String pathalias;
+    @SerializedName("is_primary")
+    @Expose
+    private Integer isPrimary;
+    @SerializedName("has_comment")
+    @Expose
+    private Integer hasComment;
     @SerializedName("url_l")
     @Expose
     private String urlL;
@@ -135,9 +141,6 @@ public class Photo {
     @SerializedName("width_o")
     @Expose
     private Integer widthO;
-    @SerializedName("pathalias")
-    @Expose
-    private String pathalias;
 
     public String getId() {
         return id;
@@ -217,14 +220,6 @@ public class Photo {
 
     public void setViews(String views) {
         this.views = views;
-    }
-
-    public String getDateFaved() {
-        return dateFaved;
-    }
-
-    public void setDateFaved(String dateFaved) {
-        this.dateFaved = dateFaved;
     }
 
     public String getMedia() {
@@ -435,6 +430,30 @@ public class Photo {
         this.widthC = widthC;
     }
 
+    public String getPathalias() {
+        return pathalias;
+    }
+
+    public void setPathalias(String pathalias) {
+        this.pathalias = pathalias;
+    }
+
+    public Integer getIsPrimary() {
+        return isPrimary;
+    }
+
+    public void setIsPrimary(Integer isPrimary) {
+        this.isPrimary = isPrimary;
+    }
+
+    public Integer getHasComment() {
+        return hasComment;
+    }
+
+    public void setHasComment(Integer hasComment) {
+        this.hasComment = hasComment;
+    }
+
     public String getUrlL() {
         return urlL;
     }
@@ -481,14 +500,6 @@ public class Photo {
 
     public void setWidthO(Integer widthO) {
         this.widthO = widthO;
-    }
-
-    public String getPathalias() {
-        return pathalias;
-    }
-
-    public void setPathalias(String pathalias) {
-        this.pathalias = pathalias;
     }
 
 }

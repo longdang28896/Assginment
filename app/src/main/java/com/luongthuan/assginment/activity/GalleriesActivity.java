@@ -1,6 +1,7 @@
 package com.luongthuan.assginment.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,7 +14,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.gson.Gson;
-import com.luongthuan.assginment.GalleryAdapter;
+import com.luongthuan.assginment.adapter.GalleryAdapter;
 import com.luongthuan.assginment.R;
 import com.luongthuan.assginment.model.ExampleGallery;
 import com.luongthuan.assginment.model.Gallery;
@@ -28,14 +29,14 @@ public class GalleriesActivity extends AppCompatActivity {
     SwipeRefreshLayout srlGallery;
     List<Gallery> galleryList;
     GalleryAdapter galleryAdapter;
-    LinearLayoutManager linearLayoutManager;
+    GridLayoutManager gridLayoutManager;
     ExampleGallery exampleGallery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_galleries);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         rvGallery = findViewById(R.id.rvGallery);
         srlGallery = findViewById(R.id.srlGallery);
         galleryList = new ArrayList<>();
@@ -50,7 +51,7 @@ public class GalleriesActivity extends AppCompatActivity {
     }
 
     private void FastGallery() {
-        AndroidNetworking.get("https://www.flickr.com/services/rest/?method=flickr.galleries.getList&api_key=9d788c3ae7173a1cda830edcc1be5792&user_id=187015156%40N07&per_page=10&page=1&format=json&nojsoncallback=1")
+        AndroidNetworking.get("https://www.flickr.com/services/rest/?method=flickr.galleries.getList&api_key=ef1045dcda144840d9b3dfda972c199c&user_id=187015156%40N07&per_page=10&page=1&format=json&nojsoncallback=1")
                 .setTag("test")
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -62,8 +63,8 @@ public class GalleriesActivity extends AppCompatActivity {
                         galleryAdapter = new GalleryAdapter(galleryList, GalleriesActivity.this);
                         rvGallery.setAdapter(galleryAdapter);
                         rvGallery.setHasFixedSize(true);
-                        linearLayoutManager = new LinearLayoutManager(GalleriesActivity.this, LinearLayoutManager.VERTICAL, false);
-                        rvGallery.setLayoutManager(linearLayoutManager);
+                        gridLayoutManager = new GridLayoutManager(GalleriesActivity.this,2);
+                        rvGallery.setLayoutManager(gridLayoutManager);
                         Log.e("GL", galleryList.size() + "");
                     }
 

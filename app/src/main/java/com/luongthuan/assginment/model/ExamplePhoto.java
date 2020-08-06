@@ -4,21 +4,21 @@ package com.luongthuan.assginment.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ExampleFavorite {
+public class ExamplePhoto {
 
     @SerializedName("photos")
     @Expose
-    private PhotosFavorite photosFavorite;
+    private PhotosGP photosGP;
     @SerializedName("stat")
     @Expose
     private String stat;
 
-    public PhotosFavorite getPhotosFavorite() {
-        return photosFavorite;
+    public PhotosGP getPhotosGP() {
+        return photosGP;
     }
 
-    public void setPhotosFavorite(PhotosFavorite photosFavorite) {
-        this.photosFavorite = photosFavorite;
+    public void setPhotosGP(PhotosGP photosGP) {
+        this.photosGP = photosGP;
     }
 
     public String getStat() {

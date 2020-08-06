@@ -1,4 +1,4 @@
-package com.luongthuan.assginment;
+package com.luongthuan.assginment.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.luongthuan.assginment.R;
 import com.luongthuan.assginment.activity.PhotoGalleryActivity;
 import com.luongthuan.assginment.model.Gallery;
 
@@ -39,7 +40,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.MyHolder
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, final int position) {
         holder.tvTitle.setText(galleryList.get(position).getTitle().getContent());
-        holder.cvTitle.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, PhotoGalleryActivity.class);

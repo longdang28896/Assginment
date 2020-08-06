@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Photos {
+public class PhotosFavorite {
 
     @SerializedName("page")
     @Expose
@@ -21,7 +21,7 @@ public class Photos {
     private String total;
     @SerializedName("photo")
     @Expose
-    private List<Photo> photo = null;
+    private List<PhotoFavorite> photoFavorite = null;
 
     public Integer getPage() {
         return page;
@@ -55,12 +55,12 @@ public class Photos {
         this.total = total;
     }
 
-    public List<Photo> getPhoto() {
-        return photo;
+    public List<PhotoFavorite> getPhotoFavorite() {
+        return photoFavorite;
     }
 
-    public void setPhoto(List<Photo> photo) {
-        this.photo = photo;
+    public void setPhotoFavorite(List<PhotoFavorite> photoFavorite) {
+        this.photoFavorite = photoFavorite;
     }
 
 }
