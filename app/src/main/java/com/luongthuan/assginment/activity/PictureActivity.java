@@ -6,6 +6,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,9 +49,11 @@ public class PictureActivity extends AppCompatActivity {
     FloatingActionButton action1, action2, action3, action4, action5;
     String pathalias, title;
     int position;
-    ArrayList<Image> arrayUrl;
     private ViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager;
+    ArrayList<Image> listUrl;
+    Image image;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,25 +63,47 @@ public class PictureActivity extends AppCompatActivity {
         imgPicture = findViewById(R.id.imgPicture1);
         tvName = findViewById(R.id.tvName);
         viewPager = findViewById(R.id.viewPager);
-        arrayUrl = new ArrayList();
+        action1 = findViewById(R.id.action1);
+        action2 = findViewById(R.id.action2);
+        action3 = findViewById(R.id.action3);
+        action4 = findViewById(R.id.action4);
+        action5 = findViewById(R.id.action5);
+
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         position = bundle.getInt("position");
         title = bundle.getString("Title");
         pathalias = bundle.getString("Pathalias");
-        arrayUrl = bundle.getParcelableArrayList("url");
+
+        Log.e("PT", position + "");
         viewPagerAdapter = new ViewPagerAdapter(photoFavoriteList, PictureActivity.this);
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setCurrentItem(position);
+
+        check(position);
+        tvName.setText(listUrl.get(listUrl.size() - 1).getTitle());
+        action1.setLabelText(listUrl.get(listUrl.size() - 1).getHeight() + " x " + listUrl.get(listUrl.size() - 1).getWidth());
+        action2.setLabelText(listUrl.get(listUrl.size() - 2).getHeight() + " x " + listUrl.get(listUrl.size() - 2).getWidth());
+        action3.setLabelText(listUrl.get(listUrl.size() - 3).getHeight() + " x " + listUrl.get(listUrl.size() - 3).getWidth());
+        action4.setLabelText("Share Facebook");
+        action5.setLabelText("Set Wallpaper");
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
             }
 
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+
+                check(position);
+                tvName.setText(listUrl.get(listUrl.size() - 1).getTitle());
+                action1.setLabelText(listUrl.get(listUrl.size() - 1).getHeight() + " x " + listUrl.get(listUrl.size() - 1).getWidth());
+                action2.setLabelText(listUrl.get(listUrl.size() - 2).getHeight() + " x " + listUrl.get(listUrl.size() - 2).getWidth());
+                action3.setLabelText(listUrl.get(listUrl.size() - 3).getHeight() + " x " + listUrl.get(listUrl.size() - 3).getWidth());
+
             }
 
             @Override
@@ -86,21 +112,6 @@ public class PictureActivity extends AppCompatActivity {
             }
         });
 
-        Log.e("ArrayUrl", arrayUrl + "");
-
-        tvName.setText(title);
-        action1 = findViewById(R.id.action1);
-        action2 = findViewById(R.id.action2);
-        action3 = findViewById(R.id.action3);
-        action4 = findViewById(R.id.action4);
-        action5 = findViewById(R.id.action5);
-
-
-        action1.setLabelText(arrayUrl.get(arrayUrl.size() - 1).getHeight() + " x " + arrayUrl.get(arrayUrl.size() - 1).getWidth());
-        action2.setLabelText(arrayUrl.get(arrayUrl.size() - 2).getHeight() + " x " + arrayUrl.get(arrayUrl.size() - 2).getWidth());
-        action3.setLabelText(arrayUrl.get(arrayUrl.size() - 3).getHeight() + " x " + arrayUrl.get(arrayUrl.size() - 3).getWidth());
-        action4.setLabelText("Share Facebook");
-        action5.setLabelText("Set Wallpaper");
 
         action1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,7 +168,7 @@ public class PictureActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ShareLinkContent content = new ShareLinkContent.Builder()
-                        .setContentUrl(Uri.parse(arrayUrl.get(arrayUrl.size() - 1).getUrl()))
+                        .setContentUrl(Uri.parse(listUrl.get(listUrl.size() - 1).getUrl()))
                         .build();
 
                 ShareDialog shareDialog = new ShareDialog(PictureActivity.this);
@@ -168,12 +179,15 @@ public class PictureActivity extends AppCompatActivity {
         action5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 WallpaperManager wpm = WallpaperManager.getInstance(PictureActivity.this);
                 InputStream ins = null;
+
                 try {
-                    ins = new URL(arrayUrl.get(arrayUrl.size() - 1).getUrl()).openStream();
+                    ins = new URL(listUrl.get(listUrl.size() - 1).getUrl()).openStream();
                     wpm.setStream(ins);
                     Toast.makeText(PictureActivity.this, "Wallpaper Changed", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
@@ -185,13 +199,97 @@ public class PictureActivity extends AppCompatActivity {
 
     }
 
+    private void check(int position) {
+        listUrl = new ArrayList<>();
+        if (photoFavoriteList.get(position).getUrlSq() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlSq());
+            image.setWidth(photoFavoriteList.get(position).getWidthSq().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightSq().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlT() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlT());
+            image.setWidth(photoFavoriteList.get(position).getWidthT().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightT().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlS() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlS());
+            image.setWidth(photoFavoriteList.get(position).getWidthS().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightS().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlQ() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlQ());
+            image.setWidth(photoFavoriteList.get(position).getWidthQ().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightQ().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlM() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlM());
+            image.setWidth(photoFavoriteList.get(position).getWidthM().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightM().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlN() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlN());
+            image.setWidth(photoFavoriteList.get(position).getWidthN().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightN().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlZ() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlZ());
+            image.setWidth(photoFavoriteList.get(position).getWidthZ().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightZ().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlC() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlC());
+            image.setWidth(photoFavoriteList.get(position).getWidthC().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightC().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlL() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlL());
+            image.setWidth(photoFavoriteList.get(position).getWidthL().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightL().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+        if (photoFavoriteList.get(position).getUrlO() != null) {
+            image = new Image();
+            image.setUrl(photoFavoriteList.get(position).getUrlO());
+            image.setWidth(photoFavoriteList.get(position).getWidthO().toString());
+            image.setHeight(photoFavoriteList.get(position).getHeightO().toString());
+            image.setTitle(photoFavoriteList.get(position).getTitle());
+            listUrl.add(image);
+        }
+    }
+
 
     private void startDownLoading1() {
 
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(arrayUrl.size() - 1).getUrl()));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(listUrl.get(listUrl.size() - 1).getUrl()));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        request.setTitle("BackgroundHD" + arrayUrl.get(arrayUrl.size() - 1).getUrl().substring(35));
-        request.setDescription(arrayUrl.get(arrayUrl.size() - 1).getUrl());
+        request.setTitle("BackgroundHD" + listUrl.get(listUrl.size() - 1).getUrl().substring(35));
+        request.setDescription(listUrl.get(listUrl.size() - 1).getUrl());
         Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -201,10 +299,10 @@ public class PictureActivity extends AppCompatActivity {
     }
 
     private void startDownLoading2() {
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(arrayUrl.size() - 2).getUrl()));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(listUrl.get(listUrl.size() - 2).getUrl()));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        request.setTitle("BackgroundHD" + arrayUrl.get(arrayUrl.size() - 2).getUrl().substring(35));
-        request.setDescription(arrayUrl.get(arrayUrl.size() - 2).getUrl());
+        request.setTitle("BackgroundHD" + listUrl.get(listUrl.size() - 2).getUrl().substring(35));
+        request.setDescription(listUrl.get(listUrl.size() - 2).getUrl());
         Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -215,10 +313,10 @@ public class PictureActivity extends AppCompatActivity {
 
     private void startDownLoading3() {
 
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(arrayUrl.get(arrayUrl.size() - 3).getUrl()));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(listUrl.get(listUrl.size() - 3).getUrl()));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        request.setTitle("BackgroundHD" + arrayUrl.get(arrayUrl.size() - 3).getUrl().substring(35));
-        request.setDescription(arrayUrl.get(arrayUrl.size() - 3).getUrl());
+        request.setTitle("BackgroundHD" + listUrl.get(listUrl.size() - 3).getUrl().substring(35));
+        request.setDescription(listUrl.get(listUrl.size() - 3).getUrl());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + System.currentTimeMillis());
         Toast.makeText(this, "Downloading...!", Toast.LENGTH_SHORT).show();
@@ -259,7 +357,7 @@ public class PictureActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        arrayUrl.clear();
+        // arrayUrl.clear();
 
     }
 }

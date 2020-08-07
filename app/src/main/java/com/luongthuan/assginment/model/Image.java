@@ -5,7 +5,7 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 
 public class Image  implements Parcelable {
-    String url,width,height;
+    String url,width,height,title;
 
     public Image() {
     }
@@ -14,6 +14,7 @@ public class Image  implements Parcelable {
         url = in.readString();
         width = in.readString();
         height = in.readString();
+        title = in.readString();
     }
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
@@ -27,6 +28,21 @@ public class Image  implements Parcelable {
             return new Image[size];
         }
     };
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Image(String url, String width, String height, String title) {
+        this.url = url;
+        this.width = width;
+        this.height = height;
+        this.title = title;
+    }
 
     public String getUrl() {
         return url;
